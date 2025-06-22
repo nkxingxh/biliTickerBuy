@@ -12,11 +12,15 @@ def buy_cmd(args: Namespace):
     from task.buy import buy
     from loguru import logger
 
+    # 解码抢票信息, 并将部分识别信息写入日志及其文件名中
+    tickets_info = json.loads(args.tickets_info_str)
+
     filename_only = os.path.basename(args.filename)
+    logger.info(f"识别信息：{tickets_info['phone']} {tickets_info['buyer']} {tickets_info['tel']}")
     logger.info(f"模式：{args.terminal_ui}")
     if args.terminal_ui == "网页":
         log_file = loguru_config(
-            LOG_DIR, f"{uuid.uuid1()}.log", enable_console=False, file_colorize=True
+            LOG_DIR, f"{tickets_info['phone']}_{tickets_info['buyer']}_{uuid.uuid1()}.log", enable_console=False, file_colorize=True
         )
         from task.endpoint import start_heartbeat_thread
         import gradio_client
@@ -70,7 +74,7 @@ def buy_cmd(args: Namespace):
         )
     else:
         log_file = loguru_config(
-            LOG_DIR, f"{uuid.uuid1()}.log", enable_console=True, file_colorize=True
+            LOG_DIR, f"{tickets_info['phone']}_{tickets_info['buyer']}_{uuid.uuid1()}.log", enable_console=True, file_colorize=True
         )
     buy(
         args.tickets_info_str,
