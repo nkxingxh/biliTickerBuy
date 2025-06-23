@@ -287,6 +287,7 @@ def upload_file(filepath):
 def add(browser_path=None):
     main_request.cookieManager.db.delete("cookie")
     gr.Info("已经注销，将打开浏览器，请在浏览器里面重新登录", duration=5)
+    gr.Info("注意登录完成后打开设备仿真下一单", duration=5)
     yield [
         gr.update(value="未登录"),
         gr.update(value=GLOBAL_COOKIE_PATH),
@@ -355,10 +356,10 @@ def setting_tab():
 
     with gr.Column(variant="compact"):
         ctoken_server_ui = gr.Textbox(
-            label="ctoken服务器地址",
+            label="ctoken服务器地址，没有请留空",
             value="http://localhost:8080",
             placeholder="请输入ctoken服务器地址",
-            info="默认: http://localhost:8080"
+            info="使用官方api启动后填写: http://localhost:8080"
         )
         info_ui = gr.TextArea(
             info="票务信息", label="配置票的信息", interactive=False, visible=False

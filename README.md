@@ -27,8 +27,6 @@
 </div>
 
 <br>
-<b>在此通知移除前，此项目仅供技术分析，您也不应该在此时将MyGO作为正式环境使用的抢票软件。</b>
-<br>
 <b>在此感谢原作者MikuMifa为BW而做出的一切努力！这么多年来，你辛苦了！</b>
 
 <br>
@@ -36,25 +34,24 @@
 
 ## 注意事项
 
-本项目没有云控，但我们仍然不允许您使用此项目进行盈利性/商业化批量抢票。除非您承认，您失去了父母。
-为防止黄牛滥用和自动化脚本泛滥，本项目暂不提供ctoken/ticket生成的核心代码实现。我们理解这可能会给正常用户带来一些不便，但这一措施能有效限制大规模自动化抢票行为。
+- 本项目没有云控，但我们仍然不允许您使用此项目进行盈利性/商业化批量抢票。除非您承认，您失去了父母。
+- 为防止黄牛滥用和自动化脚本泛滥，本项目暂不提供ctoken/ticket生成的核心代码实现。我们理解这可能会给正常用户带来一些不便，但这一措施能有效限制大规模自动化抢票行为。
+- 此脚本只能作为**辅助**使用，使用此脚本**完全代替人工抢票**现阶段是不现实的
+- 普通用户抢票间隔不建议小于**200**，被黑号/账号异常过的抢票间隔不要小于**250**
+- 延迟越低，成功率越高，**临时封号/临时封实名危险越大**，自行权衡利弊
 
 ## 怎么用
-执行
-
-```
-pip install -r requirements.txt -i https://pypi.douban.com/simple
-playwright install
-```
-
+- 下载exe并运行
+- 如果浏览器无法打开，用chrome/edge浏览器输入“chrome://version"打开访问
+- 然后复制”可执行文件路径“后面一长串到输入框
 - 在登录账号后，不要关闭浏览器，那段时间不是让你干等的
 - 首先按f12打开开发者模式，打开设备仿真（电脑手机的图标）
 - 刷新页面，随便打开一个漫展活动场次
 - 点击购买并到达支付页面，在手机端取消订单
 
-### 如何获取ctoken/ticket？
+### 如何获取ctoken？
 
-您有以下两种方式获取ctoken/ticket：
+您有以下两种方式获取ctoken：
 
 #### 1. 自行逆向实现API
 
@@ -88,32 +85,6 @@ GET http://localhost:8080/get/xXxXxXxXxXxXxXxXxXxX
 }
 ```
 
-** ticket获取接口 **
-
-```
-POST http://localhost:8080/getticket
-Content-Type: application/json
-
-请求体:
-{
-  "user_agent": string,        // 必填，用户代理字符串
-  "cookies": [                 // 必填，Cookie数组
-    {
-      "name": string,           // Cookie名称
-      "value": string,          // Cookie值
-      "path": string,           // 可选，Cookie路径
-      "domain": string,         // 可选，Cookie域名
-      "expires": string         // 可选，过期时间
-    }
-  ],
-  "ctkid": string              // 可选，CToken会话ID（非必须）
-}
-
-响应:
-{
-  "ticket": "获取到的B站Ticket",
-  "error": string              // 错误时返回
-}
 
 ```
 
@@ -122,6 +93,7 @@ Content-Type: application/json
 
 我们提供稳定的官方API服务：
 - Telegram联系: @miaowuawa
+- QQ联系：2022505032
 - 特点: 低延迟、高并发、免费使用
 - 要求: 需要提供一些基本信息以验证身份
 
@@ -143,9 +115,9 @@ Content-Type: application/json
 
 ## ❗ 项目问题
 
-程序使用问题： [点此链接前往discussions](https://github.com/mikumifa/biliTickerBuy/discussions)
+程序使用问题： [点此链接前往discussions](https://github.com/miaowuawa/MyGO/discussions)
 
-反馈程序BUG或者提新功能建议： [点此链接向项目提出反馈BUG](https://github.com/mikumifa/biliTickerBuy/issues/new/choose)
+反馈程序BUG或者提新功能建议： [点此链接向项目提出反馈BUG](https://github.com/miaowuawa/MyGO/issues/new/choose)
 
 
 

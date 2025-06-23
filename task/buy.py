@@ -58,16 +58,18 @@ def buy_stream(
 
     # 初始化RiskClient，从tickets_info中获取服务器地址
     tickets_info_dict = json.loads(tickets_info_str)
-    if tickets_info_dict['ctoken_server']['url'] is None and is_hot_project:
-        raise ValueError("此类型票必须配置ctoken服务器地址，但ctoken服务器地址未配置，请在GUI中设置ctoken_server_url参数")
-    risk_client = RiskClient(tickets_info_dict['ctoken_server']['url'])
+    if tickets_info_dict['ctoken_server']['url'] == "" and is_hot_project:
+        logger.warning("防止风控，请在GUI中设置ctoken_server_url参数")
+        risk_client = RiskClient("")
+    else:
+        risk_client = RiskClient(tickets_info_dict['ctoken_server']['url'])
     ctkid = None
     ctoken = ""
     fesign = None
     buvid3 = None
 
     # 调试输出cookie列表
-    logger.debug(f"完整cookie列表: {json.dumps(cookies, indent=2)}")
+    #logger.debug(f"完整cookie列表: {json.dumps(cookies, indent=2)}")
 
     # 查找需要的cookie，不区分大小写
     for cookie in cookies:
@@ -92,7 +94,7 @@ def buy_stream(
 
     if fesign is None or buvid3 is None:
         yield "提示：您的cookie可能有问题，概率触发风控，但是不影响你抢票"
-        yield " 如果开始时间还有很久，请重新获取一下cookie，注意多操作几下"
+        yield " 如果开始时间还有很久，请重新获取一下cookie，注意一定要打开设备仿真下单一次"
 
     deviceid = fesign
     riskHeader = risk_client.fake_x_risk_header(buvid3, deviceid)
@@ -138,7 +140,7 @@ def buy_stream(
     while is_running:
         try:
             # 如果是热门项目且需要刷新ctoken
-            if is_hot_project:
+            if is_hot_project and tickets_info_dict['ctoken_server']['url'] != "":
                 try:
                     if ctkid:
                         # 刷新ctoken
@@ -157,11 +159,15 @@ def buy_stream(
                     token_payload["token"] = ctoken
                 except Exception as e:
                     yield f"ctoken操作失败: {str(e)}"
+                    yield "请检查ctoken服务器是否启动，地址配置是否正确"
                     if not ctoken:
                         continue  # 如果没有ctoken则跳过本次循环
             retry_count = 0
             yield "1）订单准备"
-            ctoken = risk_client.refresh_ctoken(ctkid)
+            if is_hot_project and tickets_info_dict['ctoken_server']['url'] != "":
+                ctoken = risk_client.refresh_ctoken(ctkid)
+            else:
+                ctoken = ""
             request_result_normal = _request.post(
                 url=f"https://show.bilibili.com/api/ticket/order/prepare?project_id={tickets_info['project_id']}",
                 data=token_payload,
@@ -331,7 +337,10 @@ def buy_stream(
                     yield "抢票结束"
                     break
                 try:
-                    ctoken = risk_client.refresh_ctoken(ctkid=ctkid)
+                    if tickets_info["ctoken_server"]["url"] != "":
+                        ctoken = risk_client.refresh_ctoken(ctkid=ctkid)
+                    else:
+                        ctoken = ""
                     response = _request.post(
                         url=f"https://show.bilibili.com/api/ticket/order/createV2?project_id={tickets_info['project_id']}",
                         data=payload,
